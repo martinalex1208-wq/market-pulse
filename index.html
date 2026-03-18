@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Market Pulse</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont;
+      background: #0b1220;
+      color: #e2e8f0;
+      text-align: center;
+      padding: 80px 20px;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 40px;
+    }
+    button {
+      padding: 16px 32px;
+      font-size: 18px;
+      background: #22c55e;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .card {
+      margin-top: 50px;
+      padding: 30px;
+      background: #111827;
+      border-radius: 16px;
+      display: inline-block;
+      text-align: left;
+      min-width: 300px;
+    }
+    .label {
+      color: #64748b;
+      font-size: 14px;
+    }
+    .value {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Market Pulse</h1>
+<p class="subtitle">AI Market Decision System</p>
+
+<button onclick="generate()">Get Market Pulse</button>
+
+<div id="result"></div>
+
+<script>
+function generate() {
+  const data = {
+    direction: "震盪偏多",
+    keywords: ["FED", "Oil", "War"],
+    strategy: "不追高，等待方向確認"
+  };
+
+  document.getElementById("result").innerHTML = `
+    <div class="card">
+      <div class="label">Market Direction</div>
+      <div class="value">🧭 ${data.direction}</div>
+
+      <div class="label">Key Drivers</div>
+      <div class="value">🌍 ${data.keywords.join(", ")}</div>
+
+      <div class="label">Strategy</div>
+      <div class="value">🧠 ${data.strategy}</div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
