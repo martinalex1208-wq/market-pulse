@@ -2,75 +2,56 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>Market Pulse</title>
+<title>Market Pulse AI</title>
 
 <style>
 body {
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont;
+  font-family:-apple-system;
   background:#0b1220;
   color:#e2e8f0;
   text-align:center;
 }
 
 .container {
-  padding:80px 20px;
+  padding:60px 20px;
 }
 
-h1 {
-  font-size:48px;
-  margin-bottom:10px;
-}
-
-.subtitle {
-  color:#94a3b8;
-  margin-bottom:20px;
-}
-
-.description {
+textarea {
+  width:80%;
   max-width:600px;
-  margin:0 auto 40px;
-  color:#cbd5f5;
+  height:120px;
+  margin:20px 0;
+  border-radius:10px;
+  border:none;
+  padding:10px;
 }
 
 button {
-  padding:16px 32px;
-  font-size:18px;
+  padding:14px 30px;
+  font-size:16px;
   background:#22c55e;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
   cursor:pointer;
 }
 
 .card {
-  margin-top:50px;
-  padding:30px;
+  margin-top:40px;
+  padding:25px;
   background:#111827;
   border-radius:16px;
   display:inline-block;
   text-align:left;
-  min-width:320px;
+  min-width:300px;
 }
 
-.label {
-  color:#64748b;
-  font-size:14px;
-}
-
-.value {
-  font-size:20px;
-  margin-bottom:15px;
-}
+.label { color:#64748b; font-size:14px; }
+.value { font-size:18px; margin-bottom:10px; }
 
 .risk-low { color:#22c55e; }
 .risk-medium { color:#facc15; }
 .risk-high { color:#ef4444; }
-
-.footer {
-  margin-top:60px;
-  color:#64748b;
-  font-size:14px;
-}
 </style>
 
 </head>
@@ -78,76 +59,56 @@ button {
 
 <div class="container">
 
-<h1>Market Pulse</h1>
-<p class="subtitle">AI Market Decision System</p>
+<h1>Market Pulse AI</h1>
+<p>貼上新聞，AI 自動分析市場方向</p>
 
-<p class="description">
-整合市場訊號與 AI 分析，提供簡潔清晰的方向判斷與策略建議，
-幫助你在複雜市場中做出更明智的決策。
-</p>
+<textarea id="news" placeholder="貼上市場新聞..."></textarea><br>
 
-<button onclick="generate()">Generate Market Pulse</button>
+<button onclick="analyze()">Analyze Market</button>
 
 <div id="result"></div>
-
-<div class="footer">
-AI Powered · Real-time Analysis · Simple Decisions
-</div>
 
 </div>
 
 <script>
-function generate() {
+function analyze() {
 
-  const scenarios = [
-    {
-      direction:"震盪偏多",
-      keywords:["FED","Oil","War"],
-      strategy:"不追高，等待回檔",
-      risk:"medium",
-      confidence:72
-    },
-    {
-      direction:"偏空",
-      keywords:["Inflation","Rate Hike"],
-      strategy:"降低倉位，保守操作",
-      risk:"high",
-      confidence:65
-    },
-    {
-      direction:"多頭延續",
-      keywords:["Tech Rally","Liquidity"],
-      strategy:"順勢操作",
-      risk:"low",
-      confidence:80
-    }
-  ];
+  const text = document.getElementById("news").value.toLowerCase();
 
-  const data = scenarios[Math.floor(Math.random()*scenarios.length)];
+  let direction = "震盪";
+  let strategy = "觀望";
+  let risk = "medium";
+  let confidence = 60;
+
+  if(text.includes("rate hike") || text.includes("inflation")){
+    direction = "偏空";
+    strategy = "降低倉位";
+    risk = "high";
+    confidence = 70;
+  }
+
+  if(text.includes("liquidity") || text.includes("stimulus") || text.includes("rally")){
+    direction = "偏多";
+    strategy = "順勢操作";
+    risk = "low";
+    confidence = 80;
+  }
 
   document.getElementById("result").innerHTML = `
     <div class="card">
-
-      <div class="label">Market Direction</div>
-      <div class="value">🧭 ${data.direction}</div>
-
-      <div class="label">Key Drivers</div>
-      <div class="value">🌍 ${data.keywords.join(", ")}</div>
+      <div class="label">Direction</div>
+      <div class="value">📈 ${direction}</div>
 
       <div class="label">Strategy</div>
-      <div class="value">🧠 ${data.strategy}</div>
+      <div class="value">🧠 ${strategy}</div>
 
-      <div class="label">Risk Level</div>
-      <div class="value risk-${data.risk}">
-        ⚠️ ${data.risk.toUpperCase()}
+      <div class="label">Risk</div>
+      <div class="value risk-${risk}">
+        ⚠️ ${risk.toUpperCase()}
       </div>
 
-      <div class="label">Confidence Score</div>
-      <div class="value">📊 ${data.confidence} / 100</div>
-
-      <div class="label">Updated Time</div>
-      <div class="value">🕒 ${new Date().toLocaleString()}</div>
-
+      <div class="label">Confidence</div>
+      <div class="value">📊 ${confidence}</div>
     </div>
   `;
 }
