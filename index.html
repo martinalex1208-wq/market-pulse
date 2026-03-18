@@ -96,6 +96,48 @@ button {
   line-height: 1.5;
   color: #94a3b8;
 }
+
+/* Analysis result */
+#analysis-result {
+  margin-top: 24px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.analysis-card {
+  background: #111827;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: left;
+}
+
+.analysis-card .analysis-direction {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.analysis-card .analysis-direction-value {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.analysis-card .analysis-direction-value.bullish { color: #22c55e; }
+.analysis-card .analysis-direction-value.bearish { color: #ef4444; }
+.analysis-card .analysis-direction-value.neutral { color: #94a3b8; }
+
+.analysis-card .analysis-reason {
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.analysis-prompt {
+  color: #64748b;
+  font-size: 14px;
+}
 </style>
 
 </head>
@@ -108,11 +150,11 @@ button {
 
 <div id="news-container"></div>
 
-<textarea id="news" placeholder="貼上市場新聞..."></textarea><br>
+<textarea id="news-input" placeholder="貼上市場新聞..."></textarea><br>
 
-<button onclick="analyze()">Analyze Market</button>
+<button id="analyze-btn" onclick="analyze()">Analyze Market</button>
 
-<div id="result"></div>
+<div id="analysis-result"></div>
 
 </div>
 
@@ -145,45 +187,38 @@ button {
 })();
 
 function analyze() {
+  var textarea = document.getElementById("news-input");
+  var resultEl = document.getElementById("analysis-result");
+  if (!textarea || !resultEl) return;
 
-  const text = document.getElementById("news").value.toLowerCase();
+  var text = (textarea.value || "").trim().toLowerCase();
 
-  let direction = "震盪";
-  let strategy = "觀望";
-  let risk = "medium";
-  let confidence = 60;
-
-  if(text.includes("rate hike") || text.includes("inflation")){
-    direction = "偏空";
-    strategy = "降低倉位";
-    risk = "high";
-    confidence = 70;
+  if (!text) {
+    resultEl.innerHTML = '<p class="analysis-prompt">請先貼上新聞內容再進行分析。</p>';
+    return;
   }
 
-  if(text.includes("liquidity") || text.includes("stimulus") || text.includes("rally")){
-    direction = "偏多";
-    strategy = "順勢操作";
-    risk = "low";
-    confidence = 80;
+  var direction = "Neutral";
+  var reason = "Mixed signals suggest a balanced market outlook.";
+  var directionClass = "neutral";
+
+  if (text.indexOf("rate cut") !== -1 || text.indexOf("stimulus") !== -1 || text.indexOf("growth") !== -1) {
+    direction = "Bullish";
+    reason = "Rate cuts, stimulus, or growth signals support liquidity and risk assets.";
+    directionClass = "bullish";
+  } else if (text.indexOf("inflation") !== -1 || text.indexOf("war") !== -1 || text.indexOf("crisis") !== -1) {
+    direction = "Bearish";
+    reason = "Inflation, geopolitical risks, or crisis signals weigh on market sentiment.";
+    directionClass = "bearish";
   }
 
-  document.getElementById("result").innerHTML = `
-    <div class="card">
-      <div class="label">Direction</div>
-      <div class="value">📈 ${direction}</div>
-
-      <div class="label">Strategy</div>
-      <div class="value">🧠 ${strategy}</div>
-
-      <div class="label">Risk</div>
-      <div class="value risk-${risk}">
-        ⚠️ ${risk.toUpperCase()}
-      </div>
-
-      <div class="label">Confidence</div>
-      <div class="value">📊 ${confidence}</div>
-    </div>
-  `;
+  resultEl.innerHTML =
+    '<div class="analysis-card">' +
+      '<div class="analysis-direction">Market Direction</div>' +
+      '<div class="analysis-direction-value ' + directionClass + '">' + direction + '</div>' +
+      '<div class="analysis-direction">Reason</div>' +
+      '<div class="analysis-reason">' + reason + '</div>' +
+    '</div>';
 }
 </script>
 
