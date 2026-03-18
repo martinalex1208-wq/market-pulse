@@ -52,6 +52,50 @@ button {
 .risk-low { color:#22c55e; }
 .risk-medium { color:#facc15; }
 .risk-high { color:#ef4444; }
+
+/* News list */
+#news-container {
+  margin-top: 40px;
+  text-align: left;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.news-card {
+  background: #111827;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  border-left: 4px solid #334155;
+}
+
+.news-card.impact-bullish { border-left-color: #22c55e; }
+.news-card.impact-bearish { border-left-color: #ef4444; }
+.news-card.impact-neutral { border-left-color: #64748b; }
+
+.news-card .news-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #f1f5f9;
+}
+
+.news-card .news-meta {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.news-card .news-meta span {
+  margin-right: 16px;
+}
+
+.news-card .news-summary {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #94a3b8;
+}
 </style>
 
 </head>
@@ -62,6 +106,8 @@ button {
 <h1>Market Pulse AI</h1>
 <p>貼上新聞，AI 自動分析市場方向</p>
 
+<div id="news-container"></div>
+
 <textarea id="news" placeholder="貼上市場新聞..."></textarea><br>
 
 <button onclick="analyze()">Analyze Market</button>
@@ -71,6 +117,33 @@ button {
 </div>
 
 <script>
+(function loadNews() {
+  fetch('data/news.json')
+    .then(function(res) { return res.json(); })
+    .then(function(items) {
+      var container = document.getElementById('news-container');
+      if (!container) return;
+      container.innerHTML = items.map(function(item) {
+        var impactClass = 'impact-neutral';
+        if (item.impact && item.impact.toLowerCase() === 'bullish') impactClass = 'impact-bullish';
+        if (item.impact && item.impact.toLowerCase() === 'bearish') impactClass = 'impact-bearish';
+        return '<div class="news-card ' + impactClass + '">' +
+          '<div class="news-title">' + (item.title || '') + '</div>' +
+          '<div class="news-meta">' +
+            '<span>' + (item.time || '') + '</span>' +
+            '<span>' + (item.source || '') + '</span>' +
+            '<span>' + (item.impact || '') + '</span>' +
+          '</div>' +
+          '<div class="news-summary">' + (item.summary || '') + '</div>' +
+          '</div>';
+      }).join('');
+    })
+    .catch(function() {
+      var c = document.getElementById('news-container');
+      if (c) c.innerHTML = '<p style="color:#64748b">無法載入新聞資料</p>';
+    });
+})();
+
 function analyze() {
 
   const text = document.getElementById("news").value.toLowerCase();
