@@ -141,6 +141,17 @@ button {
   font-size: 14px;
 }
 
+#market-mode {
+  margin: 16px 0;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #111827;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 /* News Analysis (per-line) */
 .news-analysis-section {
   background: #111827;
@@ -200,6 +211,11 @@ button {
 
 <textarea id="news-input" placeholder="貼上市場新聞..."></textarea><br>
 
+<select id="market-mode">
+  <option value="bull">Bull Market</option>
+  <option value="bear">Bear Market</option>
+</select><br>
+
 <button id="analyze-btn" onclick="analyze()">Analyze Market</button>
 
 <div id="analysis-result"></div>
@@ -207,6 +223,38 @@ button {
 </div>
 
 <script>
+var rules = null;
+
+var defaultRules = {
+  bull: {
+    bullish: [
+      { keyword: "growth", weight: 2 },
+      { keyword: "rate cut", weight: 2 }
+    ],
+    bearish: [
+      { keyword: "inflation", weight: 1 }
+    ]
+  },
+  bear: {
+    bullish: [
+      { keyword: "stimulus", weight: 1 }
+    ],
+    bearish: [
+      { keyword: "inflation", weight: 3 },
+      { keyword: "war", weight: 4 }
+    ]
+  }
+};
+
+fetch('data/rules.json')
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    rules = data;
+  })
+  .catch(function() {
+    rules = defaultRules;
+  });
+
 (function loadNews() {
   fetch('data/news.json')
     .then(function(res) { return res.json(); })
@@ -235,17 +283,38 @@ button {
 })();
 
 function analyzeLine(text) {
+  var allRules = rules || defaultRules;
+  var modeEl = document.getElementById("market-mode");
+  var mode = (modeEl && modeEl.value) || "bull";
+  var r = (allRules.bull || allRules.bear) ? (allRules[mode] || allRules.bull) : allRules;
   var t = (text || "").toLowerCase();
-  if (t.indexOf("rate cut") !== -1 || t.indexOf("stimulus") !== -1 || t.indexOf("growth") !== -1) {
-    return 1;
+  var score = 0;
+  var bullish = (r && r.bullish) ? r.bullish : [];
+  var bearish = (r && r.bearish) ? r.bearish : [];
+  for (var i = 0; i < bullish.length; i++) {
+    var item = bullish[i];
+    var kw = (typeof item === "string" ? item : item.keyword || "").toLowerCase();
+    var w = (typeof item === "object" && item.weight != null) ? item.weight : 1;
+    if (kw && t.indexOf(kw) !== -1) score += w;
   }
-  if (t.indexOf("inflation") !== -1 || t.indexOf("war") !== -1 || t.indexOf("crisis") !== -1) {
-    return -1;
+  for (var j = 0; j < bearish.length; j++) {
+    var item = bearish[j];
+    var kw = (typeof item === "string" ? item : item.keyword || "").toLowerCase();
+    var w = (typeof item === "object" && item.weight != null) ? item.weight : 1;
+    if (kw && t.indexOf(kw) !== -1) score -= w;
   }
-  return 0;
+  return score;
 }
 
-function analyze() {
+async function analyzeWithAI(text) {
+  await new Promise(function(r) { setTimeout(r, 500); });
+  return {
+    direction: "Bullish",
+    reason: "Inflation cooling suggests easing pressure on rates."
+  };
+}
+
+async function analyze() {
   var textarea = document.getElementById("news-input");
   var resultEl = document.getElementById("analysis-result");
   if (!textarea || !resultEl) return;
@@ -267,20 +336,20 @@ function analyze() {
   var total = 0;
   for (var i = 0; i < lines.length; i++) {
     var score = analyzeLine(lines[i]);
-    var sentiment = score === 1 ? "Bullish" : (score === -1 ? "Bearish" : "Neutral");
+    var sentiment = score > 0 ? "Bullish" : (score < 0 ? "Bearish" : "Neutral");
     results.push({ text: lines[i], sentiment: sentiment });
     total += score;
-    if (score === 1) numBullish++;
-    else if (score === -1) numBearish++;
+    if (score > 0) numBullish++;
+    else if (score < 0) numBearish++;
     else numNeutral++;
   }
 
   var direction, directionClass, strategy;
-  if (total >= 1) {
+  if (total >= 2) {
     direction = "Bullish";
     directionClass = "bullish";
     strategy = "Buy / Long";
-  } else if (total <= -1) {
+  } else if (total <= -2) {
     direction = "Bearish";
     directionClass = "bearish";
     strategy = "Sell / Short";
@@ -302,16 +371,7 @@ function analyze() {
     riskClass = "risk-medium";
   }
 
-  var maxSame = Math.max(numBullish, numBearish, numNeutral);
-  var consistency = maxSame / lines.length;
-  var confidence;
-  if (numBullish > 0 && numBearish > 0) {
-    confidence = 50 + Math.min(10, lines.length);
-  } else if (consistency >= 2 / 3) {
-    confidence = 70 + Math.min(10, Math.floor(lines.length * 2));
-  } else {
-    confidence = 55 + Math.min(10, lines.length);
-  }
+  var confidence = Math.min(90, 50 + Math.abs(total) * 10);
   confidence = Math.min(100, Math.max(0, confidence));
 
   var shortText = function(s) {
@@ -351,7 +411,33 @@ function analyze() {
         '<div class="label">Confidence</div>' +
         '<div class="value">' + confidence + '%</div>' +
       '</div>' +
+    '</div>' +
+    '<div id="ai-analysis-card" class="analysis-card" style="margin-top:16px">' +
+      '<div class="section-title">AI Analysis</div>' +
+      '<div class="analysis-prompt">分析中...</div>' +
     '</div>';
+
+  try {
+    var aiResult = await analyzeWithAI(raw);
+    var aiCard = document.getElementById("ai-analysis-card");
+    if (aiCard) {
+      var aiDir = (aiResult.direction || "").toLowerCase();
+      var aiDirClass = aiDir === "bullish" ? "bullish" : (aiDir === "bearish" ? "bearish" : "neutral");
+      aiCard.innerHTML =
+        '<div class="section-title">AI Analysis</div>' +
+        '<div class="analysis-row">' +
+          '<div class="analysis-direction">Direction</div>' +
+          '<div class="analysis-direction-value ' + aiDirClass + '">' + (aiResult.direction || "-") + '</div>' +
+        '</div>' +
+        '<div class="analysis-row">' +
+          '<div class="label">Reason</div>' +
+          '<div class="value" style="color:#94a3b8;font-size:14px">' + escapeHtml(aiResult.reason || "-") + '</div>' +
+        '</div>';
+    }
+  } catch (e) {
+    var aiCard = document.getElementById("ai-analysis-card");
+    if (aiCard) aiCard.innerHTML = '<div class="section-title">AI Analysis</div><div class="analysis-prompt">無法取得 AI 分析結果</div>';
+  }
 }
 </script>
 
