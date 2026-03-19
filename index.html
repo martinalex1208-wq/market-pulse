@@ -140,6 +140,52 @@ button {
   color: #64748b;
   font-size: 14px;
 }
+
+/* News Analysis (per-line) */
+.news-analysis-section {
+  background: #111827;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.news-analysis-section .section-title {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+
+.news-analysis-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1e293b;
+  font-size: 14px;
+}
+
+.news-analysis-row:last-child {
+  border-bottom: none;
+}
+
+.news-analysis-row .line-text {
+  color: #94a3b8;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.news-analysis-row .line-sentiment {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.news-analysis-row .line-sentiment.bullish { color: #22c55e; }
+.news-analysis-row .line-sentiment.bearish { color: #ef4444; }
+.news-analysis-row .line-sentiment.neutral { color: #94a3b8; }
 </style>
 
 </head>
@@ -216,10 +262,13 @@ function analyze() {
     return;
   }
 
+  var results = [];
   var numBullish = 0, numBearish = 0, numNeutral = 0;
   var total = 0;
   for (var i = 0; i < lines.length; i++) {
     var score = analyzeLine(lines[i]);
+    var sentiment = score === 1 ? "Bullish" : (score === -1 ? "Bearish" : "Neutral");
+    results.push({ text: lines[i], sentiment: sentiment });
     total += score;
     if (score === 1) numBullish++;
     else if (score === -1) numBearish++;
@@ -265,7 +314,26 @@ function analyze() {
   }
   confidence = Math.min(100, Math.max(0, confidence));
 
+  var shortText = function(s) {
+    return s.length > 60 ? s.substring(0, 57) + "..." : s;
+  };
+
+  var escapeHtml = function(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  };
+  var lineRows = results.map(function(r) {
+    var sentimentClass = r.sentiment.toLowerCase();
+    return '<div class="news-analysis-row">' +
+      '<span class="line-text">' + escapeHtml(shortText(r.text)) + '</span>' +
+      '<span class="line-sentiment ' + sentimentClass + '">' + r.sentiment + '</span>' +
+      '</div>';
+  }).join("");
+
   resultEl.innerHTML =
+    '<div class="news-analysis-section">' +
+      '<div class="section-title">News Analysis</div>' +
+      lineRows +
+    '</div>' +
     '<div class="analysis-card">' +
       '<div class="analysis-row">' +
         '<div class="analysis-direction">Direction</div>' +
