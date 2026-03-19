@@ -2,201 +2,207 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Market Pulse AI</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg: #080c10;
+  --bg-2: #0d1219;
+  --bg-3: #111820;
+  --bg-card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.12);
+  --text: #edeae4;
+  --text-2: #9e9b94;
+  --text-3: #5c5a55;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --max-w: 720px;
+  --ease: cubic-bezier(0.4,0,0.2,1);
+  --t: 0.22s;
+  --bullish: #22c55e;
+  --bearish: #ef4444;
+  --neutral: #94a3b8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body {
   margin:0;
-  font-family:-apple-system;
-  background:#0b1220;
-  color:#e2e8f0;
-  text-align:center;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
 }
-
 .container {
-  padding:60px 20px;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 4rem 1.5rem 5rem;
 }
-
+/* Hero */
+.mp-hero {
+  margin-bottom: 3.5rem;
+}
+.mp-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
+}
+.mp-hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--text-2);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.mp-hero-desc {
+  font-size: 0.9rem;
+  color: var(--text-3);
+  max-width: 480px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+/* Input area */
+.mp-input-area {
+  margin-bottom: 2rem;
+}
 textarea {
-  width:80%;
-  max-width:600px;
-  height:120px;
-  margin:20px 0;
-  border-radius:10px;
-  border:none;
-  padding:10px;
+  width: 100%;
+  max-width: 100%;
+  height: 120px;
+  margin: 1rem 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  background: var(--bg-2);
+  color: var(--text);
+  resize: vertical;
 }
-
-button {
-  padding:14px 30px;
-  font-size:16px;
-  background:#22c55e;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.card {
-  margin-top:40px;
-  padding:25px;
-  background:#111827;
-  border-radius:16px;
-  display:inline-block;
-  text-align:left;
-  min-width:300px;
-}
-
-.label { color:#64748b; font-size:14px; }
-.value { font-size:18px; margin-bottom:10px; }
-
-.risk-low { color:#22c55e; }
-.risk-medium { color:#facc15; }
-.risk-high { color:#ef4444; }
-
-/* News list */
-#news-container {
-  margin-top: 40px;
-  text-align: left;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.news-card {
-  background: #111827;
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
-  border-left: 4px solid #334155;
-}
-
-.news-card.impact-bullish { border-left-color: #22c55e; }
-.news-card.impact-bearish { border-left-color: #ef4444; }
-.news-card.impact-neutral { border-left-color: #64748b; }
-
-.news-card .news-title {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #f1f5f9;
-}
-
-.news-card .news-meta {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 10px;
-}
-
-.news-card .news-meta span {
-  margin-right: 16px;
-}
-
-.news-card .news-summary {
-  font-size: 14px;
-  line-height: 1.5;
-  color: #94a3b8;
-}
-
-/* Analysis result */
-#analysis-result {
-  margin-top: 24px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.analysis-card {
-  background: #111827;
-  border-radius: 12px;
-  padding: 24px;
-  text-align: left;
-}
-
-.analysis-card .analysis-direction {
-  font-size: 15px;
-  color: #64748b;
-  margin-bottom: 6px;
-}
-
-.analysis-card .analysis-direction-value {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.analysis-card .analysis-direction-value.bullish { color: #22c55e; }
-.analysis-card .analysis-direction-value.bearish { color: #ef4444; }
-.analysis-card .analysis-direction-value.neutral { color: #94a3b8; }
-
-.analysis-card .analysis-row {
-  margin-bottom: 14px;
-}
-
-.analysis-card .analysis-row:last-child {
-  margin-bottom: 0;
-}
-
-.analysis-prompt {
-  color: #64748b;
-  font-size: 14px;
-}
-
+textarea::placeholder { color: var(--text-3); }
 #market-mode {
-  margin: 16px 0;
-  padding: 8px 12px;
-  font-size: 14px;
-  background: #111827;
-  color: #e2e8f0;
-  border: 1px solid #334155;
-  border-radius: 8px;
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  background: var(--bg-2);
+  color: var(--text);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
-
-/* News Analysis (per-line) */
-.news-analysis-section {
-  background: #111827;
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  background: var(--bullish);
+  color: #0d0d0d;
+  transition: background var(--t) var(--ease), transform var(--t) var(--ease);
+}
+.btn-primary:hover { background: #16a34a; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0) scale(0.98); }
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-mid);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-2);
+  transition: border-color var(--t), color var(--t), background var(--t);
+  text-decoration: none;
+}
+.btn-secondary:hover { border-color: var(--border-mid); color: var(--text); background: rgba(255,255,255,0.04); }
+.mp-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
+.mp-pro-block { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+.mp-pro-copy { font-size: 0.85rem; color: var(--text-3); margin-bottom: 0.75rem; line-height: 1.5; }
+/* Cards */
+.analysis-card, .news-analysis-section, .news-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
   text-align: left;
+  transition: border-color var(--t), background var(--t);
 }
-
-.news-analysis-section .section-title {
-  font-size: 15px;
-  color: #64748b;
-  margin-bottom: 14px;
+.analysis-card:hover, .news-analysis-section:hover { border-color: var(--border-mid); }
+.analysis-card .section-title, .news-analysis-section .section-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-2);
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
 }
-
+.analysis-card .label { font-size: 0.75rem; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.analysis-card .value { font-size: 1rem; color: var(--text); margin-bottom: 1rem; }
+.analysis-card .analysis-row { margin-bottom: 1rem; }
+.analysis-card .analysis-row:last-child { margin-bottom: 0; }
+.analysis-card .analysis-direction-value.bullish { color: var(--bullish); }
+.analysis-card .analysis-direction-value.bearish { color: var(--bearish); }
+.analysis-card .analysis-direction-value.neutral { color: var(--neutral); }
+.risk-low { color: var(--bullish); }
+.risk-medium { color: #facc15; }
+.risk-high { color: var(--bearish); }
+.analysis-prompt { color: var(--text-3); font-size: 0.875rem; }
+/* News list */
+#news-container { margin: 2rem 0; text-align: left; }
+.news-card { margin-bottom: 1rem; border-left: 4px solid var(--border-mid); }
+.news-card.impact-bullish { border-left-color: var(--bullish); }
+.news-card.impact-bearish { border-left-color: var(--bearish); }
+.news-card.impact-neutral { border-left-color: var(--neutral); }
+.news-card .news-title { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text); }
+.news-card .news-meta { font-size: 0.8rem; color: var(--text-3); margin-bottom: 0.5rem; }
+.news-card .news-meta span { margin-right: 1rem; }
+.news-card .news-summary { font-size: 0.875rem; color: var(--text-2); line-height: 1.5; }
+/* Analysis result */
+#analysis-result { margin-top: 2rem; }
+.news-analysis-section { margin-bottom: 1rem; }
 .news-analysis-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  padding: 10px 0;
-  border-bottom: 1px solid #1e293b;
-  font-size: 14px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
 }
-
-.news-analysis-row:last-child {
-  border-bottom: none;
-}
-
-.news-analysis-row .line-text {
-  color: #94a3b8;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.news-analysis-row .line-sentiment {
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.news-analysis-row .line-sentiment.bullish { color: #22c55e; }
-.news-analysis-row .line-sentiment.bearish { color: #ef4444; }
-.news-analysis-row .line-sentiment.neutral { color: #94a3b8; }
+.news-analysis-row:last-child { border-bottom: none; }
+.news-analysis-row .line-text { color: var(--text-2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.news-analysis-row .line-sentiment { font-weight: 500; flex-shrink: 0; }
+.news-analysis-row .line-sentiment.bullish { color: var(--bullish); }
+.news-analysis-row .line-sentiment.bearish { color: var(--bearish); }
+.news-analysis-row .line-sentiment.neutral { color: var(--neutral); }
+.text-muted { color: var(--text-2); font-size: 0.875rem; }
+.divergence-warning { color: #f97316; margin-top: 0.75rem; font-size: 0.875rem; }
+.btn-copy { margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.82rem; background: var(--bg-3); color: var(--text-2); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-sans); transition: border-color var(--t), color var(--t); }
+.btn-copy:hover { border-color: var(--border-mid); color: var(--text); }
+.history-item { margin-bottom: 0.75rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.history-item .hi-direction { font-weight: 500; color: var(--text); }
+.history-item .hi-time { font-size: 0.75rem; color: var(--text-3); margin-top: 4px; }
+.sd-stat { font-size: 0.875rem; color: var(--text-2); margin-bottom: 0.25rem; }
+.sd-trend { margin-top: 0.75rem; font-weight: 500; color: var(--text); }
+@media (max-width: 640px) { .container { padding: 2.5rem 1rem 3rem; } .mp-actions { flex-direction: column; } }
 </style>
 
 </head>
@@ -204,25 +210,98 @@ button {
 
 <div class="container">
 
-<h1>Market Pulse AI</h1>
-<p>貼上新聞，AI 自動分析市場方向</p>
+<section class="mp-hero">
+  <h1 class="mp-hero-title">Market Pulse AI</h1>
+  <p class="mp-hero-subtitle">Understand the market. Act with clarity.</p>
+  <p class="mp-hero-desc">AI-powered market direction, confidence scoring, signal tracking, and action insight.</p>
+</section>
 
 <div id="news-container"></div>
 
-<textarea id="news-input" placeholder="貼上市場新聞..."></textarea><br>
-
-<select id="market-mode">
-  <option value="bull">Bull Market</option>
-  <option value="bear">Bear Market</option>
-</select><br>
-
-<button id="analyze-btn" onclick="analyze()">Analyze Market</button>
+<div class="mp-input-area">
+  <textarea id="news-input" placeholder="Paste market news here (one per line)..."></textarea>
+  <select id="market-mode">
+    <option value="bull">Bull Market</option>
+    <option value="bear">Bear Market</option>
+  </select>
+  <div class="mp-actions">
+    <button id="analyze-btn" class="btn-primary" onclick="analyze()">Analyze Market</button>
+  </div>
+  <div class="mp-pro-block">
+    <p class="mp-pro-copy">Unlock advanced AI signals & trading insights</p>
+    <a href="https://forms.gle/Ps1CNU3p9y6fKCEd7" target="_blank" class="btn-secondary">Get Pro Signals</a>
+  </div>
+</div>
 
 <div id="analysis-result"></div>
+
+<div class="analysis-card" style="margin-top:1.5rem;">
+  <div class="section-title">History</div>
+  <div id="historyBox"></div>
+</div>
+
+<div class="analysis-card" style="margin-top:1.5rem;">
+  <div class="section-title">Signal Dashboard</div>
+  <div id="signalDashboard"></div>
+</div>
 
 </div>
 
 <script>
+var lastAIResult = null;
+
+function renderHistory() {
+  var container = document.getElementById("historyBox");
+  if (!container) return;
+  var history = JSON.parse(localStorage.getItem("marketHistory") || "[]");
+  if (history.length === 0) {
+    container.innerHTML = "<p class='analysis-prompt'>No history yet</p>";
+    return;
+  }
+  container.innerHTML = history.map(function(item) {
+    return '<div class="history-item">' +
+      '<div class="hi-direction">' + (item.direction || "") + ' (' + (item.confidence != null ? item.confidence : "-") + '%)</div>' +
+      '<div class="hi-time">' + (item.time || "") + '</div>' +
+      '</div>';
+  }).join("");
+}
+
+function renderSignalDashboard() {
+  var el = document.getElementById("signalDashboard");
+  if (!el) return;
+  var history = JSON.parse(localStorage.getItem("marketHistory") || "[]");
+  if (!history.length) {
+    el.innerHTML = "<p class='analysis-prompt'>No signals yet</p>";
+    return;
+  }
+  var bullish = 0, bearish = 0, neutral = 0;
+  history.forEach(function(item) {
+    var d = (item.direction || "").toLowerCase();
+    if (d === "bullish") bullish++;
+    else if (d === "bearish") bearish++;
+    else neutral++;
+  });
+  var bias = "Mixed";
+  if (bullish > bearish && bullish > neutral) bias = "Bullish Bias";
+  else if (bearish > bullish && bearish > neutral) bias = "Bearish Bias";
+  else if (neutral > bullish && neutral > bearish) bias = "Neutral Bias";
+  el.innerHTML =
+    "<p class='sd-stat'>Bullish: " + bullish + "</p>" +
+    "<p class='sd-stat'>Bearish: " + bearish + "</p>" +
+    "<p class='sd-stat'>Neutral: " + neutral + "</p>" +
+    "<p class='sd-trend'><strong>Trend:</strong> " + bias + "</p>";
+}
+
+document.addEventListener("click", function(e) {
+  if (e.target.id === "copyBtn" && lastAIResult) {
+    var actions = Array.isArray(lastAIResult.action) ? lastAIResult.action : [];
+    var text = "Market Direction: " + lastAIResult.direction + " (" + (lastAIResult.confidence != null ? lastAIResult.confidence : "") + "%)\nReason: " + (lastAIResult.reason || "") + "\n\nAction:\n" + actions.join("\n");
+    navigator.clipboard.writeText(text.trim());
+    e.target.innerText = "Copied!";
+    setTimeout(function() { e.target.innerText = "Copy Result"; }, 1500);
+  }
+});
+
 var rules = null;
 
 var defaultRules = {
@@ -282,6 +361,9 @@ fetch('data/rules.json')
     });
 })();
 
+renderHistory();
+renderSignalDashboard();
+
 function analyzeLine(text) {
   var allRules = rules || defaultRules;
   var modeEl = document.getElementById("market-mode");
@@ -307,11 +389,14 @@ function analyzeLine(text) {
 }
 
 async function analyzeWithAI(text) {
-  await new Promise(function(r) { setTimeout(r, 500); });
-  return {
-    direction: "Bullish",
-    reason: "Inflation cooling suggests easing pressure on rates."
-  };
+  var res = await fetch("/api/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: text })
+  });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || "AI analysis failed");
+  return { direction: data.direction || "Neutral", confidence: data.confidence, reason: data.reason || "", action: Array.isArray(data.action) ? data.action : [] };
 }
 
 async function analyze() {
@@ -397,7 +482,7 @@ async function analyze() {
     '<div class="analysis-card">' +
       '<div class="analysis-row">' +
         '<div class="analysis-direction">Direction</div>' +
-        '<div class="analysis-direction-value ' + directionClass + '">' + direction + '</div>' +
+        '<div class="analysis-direction-value direction-value ' + directionClass + '">' + direction + '</div>' +
       '</div>' +
       '<div class="analysis-row">' +
         '<div class="label">Strategy</div>' +
@@ -412,7 +497,7 @@ async function analyze() {
         '<div class="value">' + confidence + '%</div>' +
       '</div>' +
     '</div>' +
-    '<div id="ai-analysis-card" class="analysis-card" style="margin-top:16px">' +
+    '<div id="ai-analysis-card" class="analysis-card" style="margin-top:1.5rem">' +
       '<div class="section-title">AI Analysis</div>' +
       '<div class="analysis-prompt">分析中...</div>' +
     '</div>';
@@ -421,18 +506,54 @@ async function analyze() {
     var aiResult = await analyzeWithAI(raw);
     var aiCard = document.getElementById("ai-analysis-card");
     if (aiCard) {
-      var aiDir = (aiResult.direction || "").toLowerCase();
+      var result = { direction: aiResult.direction || "Neutral", confidence: aiResult.confidence != null ? aiResult.confidence : 50, reason: aiResult.reason || "", action: Array.isArray(aiResult.action) ? aiResult.action : [] };
+      var aiDir = (result.direction || "").toLowerCase();
       var aiDirClass = aiDir === "bullish" ? "bullish" : (aiDir === "bearish" ? "bearish" : "neutral");
+      var ruleDirEl = document.querySelector(".direction-value");
+      var ruleDirection = ruleDirEl ? ruleDirEl.textContent.trim().toLowerCase() : "";
+      var aiDirection = result.direction.toLowerCase();
+      var divergenceHTML = "";
+      if (ruleDirection && aiDirection && !ruleDirection.includes(aiDirection)) {
+        var sidewaysAsNeutral = (ruleDirection === "sideways" && aiDirection === "neutral") || (ruleDirection === "neutral" && aiDirection === "sideways");
+        if (!sidewaysAsNeutral) {
+          divergenceHTML = '<p class="divergence-warning">⚠️ Market disagreement detected (AI vs Rule)</p>';
+        }
+      }
+      lastAIResult = result;
+      var actions = Array.isArray(result.action) ? result.action : [];
+      var actionListHTML = actions.map(function(a) { return "<li>" + escapeHtml(a) + "</li>"; }).join("");
       aiCard.innerHTML =
         '<div class="section-title">AI Analysis</div>' +
         '<div class="analysis-row">' +
-          '<div class="analysis-direction">Direction</div>' +
-          '<div class="analysis-direction-value ' + aiDirClass + '">' + (aiResult.direction || "-") + '</div>' +
+          '<div class="label">Direction</div>' +
+          '<div class="value">' +
+            '<span class="analysis-direction-value ' + aiDirClass + '">' + escapeHtml(result.direction) + '</span> (' + result.confidence + '%)' +
+          '</div>' +
+        '</div>' +
+        '<div class="analysis-row">' +
+          '<div class="label">Confidence</div>' +
+          '<div class="value">' + result.confidence + '%</div>' +
         '</div>' +
         '<div class="analysis-row">' +
           '<div class="label">Reason</div>' +
-          '<div class="value" style="color:#94a3b8;font-size:14px">' + escapeHtml(aiResult.reason || "-") + '</div>' +
-        '</div>';
+          '<div class="value text-muted">' + escapeHtml(result.reason) + '</div>' +
+        '</div>' +
+        (actionListHTML ? '<div class="analysis-row"><div class="label">Action Insight</div><ul style="margin:0; padding-left:1.25rem; color:var(--text-2); font-size:0.875rem; line-height:1.6;">' + actionListHTML + '</ul></div>' : '') +
+        divergenceHTML +
+        '<button id="copyBtn" class="btn-copy">Copy Result</button>';
+
+      var historyItem = {
+        time: new Date().toLocaleTimeString(),
+        direction: result.direction,
+        confidence: result.confidence,
+        reason: result.reason
+      };
+      var history = JSON.parse(localStorage.getItem("marketHistory") || "[]");
+      history.unshift(historyItem);
+      history = history.slice(0, 5);
+      localStorage.setItem("marketHistory", JSON.stringify(history));
+      renderHistory();
+      renderSignalDashboard();
     }
   } catch (e) {
     var aiCard = document.getElementById("ai-analysis-card");
